@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html class="h-full" lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+        name="viewport" />
+    <title>가입 사은품 | B world</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link href="./css/common.css" rel="stylesheet" />
+    <style>
+        /* 가로 스크롤바 숨기기 */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 선택된 카드 스타일 효과 */
+        .card-selected {
+            border-color: #5031E5 !important;
+            background-color: #F8F7FF !important;
+        }
+
+        /* 탭 액티브/인액티브 스타일 */
+        .tab-active {
+            background-color: #5031E5 !important;
+            color: white !important;
+            border-color: transparent !important;
+            font-weight: 700 !important;
+        }
+
+        .tab-inactive {
+            background-color: white !important;
+            color: #4B5563 !important;
+            /* text-gray-600 */
+            border-color: #E5E7EB !important;
+            /* border-gray-200 */
+            font-weight: 500 !important;
+        }
+    </style>
+</head>
+
+<body class="h-full w-full bg-white overflow-hidden flex flex-col relative">
+
+    <!-- 1. Header (상단 고정 영역) -->
+    <header
+        class="pt-4 px-4 pb-2 bg-white z-30 flex justify-between items-center h-14 shrink-0 border-b border-gray-100">
+        <button class="p-2 text-gray-800" onclick="history.back()">
+            <i data-lucide="chevron-left" class="w-6 h-6"></i>
+        </button>
+        <h1 class="text-[18px] font-bold text-gray-900">가입 사은품</h1>
+        <button class="p-2 text-gray-800" onclick="alert('홈 화면으로 닫기 처리 예정입니다.')">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <!-- 2. Main Content (스크롤 영역) -->
+    <main class="flex-1 overflow-y-auto scrollbar-hide bg-gray-50 flex flex-col relative" id="main-scroll-container">
+
+        <!-- 2-1. Category Tabs (Sticky) -->
+        <div class="sticky top-0 z-20 bg-white px-4 py-3 border-b border-gray-100 shadow-sm">
+            <div class="flex overflow-x-auto scrollbar-hide gap-2 pb-1" id="category-tabs">
+                <!-- onclick 이벤트를 달아 탭 전환 스크립트 연결 -->
+                <button class="category-tab shrink-0 px-4 py-1.5 rounded-full text-sm tab-active transition-colors"
+                    onclick="selectTab(this)">전체</button>
+                <button
+                    class="category-tab shrink-0 px-4 py-1.5 rounded-full text-sm tab-inactive border transition-colors"
+                    onclick="selectTab(this)">TV/가전</button>
+                <button
+                    class="category-tab shrink-0 px-4 py-1.5 rounded-full text-sm tab-inactive border transition-colors"
+                    onclick="selectTab(this)">상품권</button>
+                <button
+                    class="category-tab shrink-0 px-4 py-1.5 rounded-full text-sm tab-inactive border transition-colors"
+                    onclick="selectTab(this)">PC/디지털</button>
+                <button
+                    class="category-tab shrink-0 px-4 py-1.5 rounded-full text-sm tab-inactive border transition-colors"
+                    onclick="selectTab(this)">생활가전</button>
+            </div>
+        </div>
+
+        <!-- 2-2. Gift List Area -->
+        <div class="p-4 flex flex-col gap-4 pb-28" id="gift-list-container">
+
+            <!-- 필터/정렬 옵션 영역 -->
+            <div class="flex justify-between items-center mb-2 px-1 relative">
+                <span class="text-sm text-gray-500 font-medium">총 <b class="text-gray-900">24</b>건</span>
+                <!-- 정렬 드롭다운 트리거 -->
+                <button
+                    class="flex items-center text-sm text-gray-600 font-medium gap-1 bg-white px-2 py-1 border border-gray-200 rounded-md shadow-sm select-none"
+                    onclick="toggleSortMenu(event)">
+                    <span id="sort-label">인기순</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 transition-transform duration-200" id="sort-icon"></i>
+                </button>
+
+                <!-- 정렬 드롭다운 메뉴 (기본 숨김) -->
+                <div id="sort-menu"
+                    class="hidden absolute right-1 top-8 bg-white border border-gray-100 shadow-lg rounded-xl flex flex-col z-30 overflow-hidden w-28">
+                    <button
+                        class="text-sm text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 text-[#5031E5] font-bold transition-colors"
+                        onclick="selectSort('인기순', this)">인기순</button>
+                    <button
+                        class="text-sm text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 text-gray-600 font-medium transition-colors"
+                        onclick="selectSort('최신순', this)">최신순</button>
+                    <button
+                        class="text-sm text-left px-4 py-3 hover:bg-gray-50 text-gray-600 font-medium transition-colors"
+                        onclick="selectSort('혜택순', this)">혜택순</button>
+                </div>
+            </div>
+
+            <!-- List Item 1 -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm transition-all cursor-pointer gift-card"
+                onclick="toggleSelect(this, 'product-1')">
+                <div class="flex gap-4">
+                    <!-- 썸네일 (더미 이미지 -> Unsplash 실제 이미지 연동) -->
+                    <div class="w-24 h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=200&h=200&fit=crop"
+                            alt="냉장고 이미지" class="w-full h-full object-cover">
+                        <span
+                            class="absolute top-0 left-0 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-br-lg">BEST</span>
+                    </div>
+                    <!-- 정보 -->
+                    <div class="flex flex-col flex-1 justify-center">
+                        <span class="text-xs text-gray-500 mb-1">LG전자</span>
+                        <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-2">
+                            디오스 오브제컬렉션 양문형 냉장고 832L
+                        </h3>
+                        <div class="flex items-center gap-1 mt-auto">
+                            <span
+                                class="text-xs text-[#5031E5] font-bold bg-[#F8F7FF] px-2 py-1 rounded-md line-clamp-1">+
+                                추가 상품권 5만원</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Item 2 -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm transition-all cursor-pointer gift-card"
+                onclick="toggleSelect(this, 'product-2')">
+                <div class="flex gap-4">
+                    <!-- 썸네일 -->
+                    <div class="w-24 h-24 shrink-0 bg-gray-100 rounded-xl overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=200&h=200&fit=crop"
+                            alt="TV 이미지" class="w-full h-full object-cover">
+                    </div>
+                    <!-- 정보 -->
+                    <div class="flex flex-col flex-1 justify-center">
+                        <span class="text-xs text-gray-500 mb-1">삼성전자</span>
+                        <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-2">
+                            QLED 4K 163cm (65인치) 스마트 TV 스탠드형
+                        </h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List Item 3 (상품권 예시) -->
+            <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm transition-all cursor-pointer gift-card"
+                onclick="toggleSelect(this, 'product-3')">
+                <div class="flex gap-4">
+                    <!-- 썸네일 -->
+                    <div
+                        class="w-24 h-24 shrink-0 bg-orange-50 rounded-xl overflow-hidden flex items-center justify-center">
+                        <i data-lucide="gift" class="w-10 h-10 text-orange-400"></i>
+                    </div>
+                    <!-- 정보 -->
+                    <div class="flex flex-col flex-1 justify-center">
+                        <span class="text-xs text-gray-500 mb-1">모바일 상품권</span>
+                        <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-2">
+                            신세계/이마트 모바일 상품권 40만원권
+                        </h3>
+                        <div class="flex items-center gap-1 mt-auto">
+                            <span class="text-xs text-gray-600 font-medium bg-gray-100 px-2 py-1 rounded-md">당일
+                                발송</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 3. Bottom Action Bar (플로팅 바) -->
+    <div id="bottom-action-bar"
+        class="absolute bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] transform translate-y-full transition-transform duration-300 z-40 pb-safe">
+        <div class="p-4 flex flex-col gap-3">
+            <div class="flex justify-between items-center px-1">
+                <span class="text-sm text-gray-600 font-medium">선택 상품</span>
+                <span id="selected-count-text" class="text-[15px] font-bold text-[#5031E5]">0개 선택됨</span>
+            </div>
+            <button id="confirm-btn"
+                class="w-full bg-[#5031E5] text-white py-3.5 rounded-xl text-[16px] font-bold shadow-md transition-all active:scale-[0.98]"
+                onclick="submitSelection()">
+                사은품 선택 완료
+            </button>
+        </div>
+    </div>
+
+    <!-- 4. UI Interaction Scripts -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // ------------------
+        // [상태 관리]
+        // ------------------
+        let selectedItems = new Set();
+        let isSortMenuOpen = false;
+
+        // ------------------
+        // [1] 사은품 선택/해제 로직
+        // ------------------
+        function toggleSelect(element, productId) {
+            const isSelected = selectedItems.has(productId);
+
+            if (isSelected) {
+                // 선택 해제
+                selectedItems.delete(productId);
+                element.classList.remove('card-selected');
+                element.querySelector('h3').classList.remove('text-[#5031E5]');
+            } else {
+                // 선택 추가
+                selectedItems.add(productId);
+                element.classList.add('card-selected');
+                element.querySelector('h3').classList.add('text-[#5031E5]');
+            }
+            updateBottomBar();
+        }
+
+        // 플로팅 바 올리고 내리기
+        function updateBottomBar() {
+            const bottomBar = document.getElementById('bottom-action-bar');
+            const countText = document.getElementById('selected-count-text');
+
+            countText.textContent = `${selectedItems.size}개 선택됨`;
+
+            if (selectedItems.size > 0) {
+                bottomBar.classList.remove('translate-y-full'); // 보이기
+            } else {
+                bottomBar.classList.add('translate-y-full');    // 숨기기
+            }
+        }
+
+        // ------------------
+        // [2] 카테고리 탭 전환 로직
+        // ------------------
+        function selectTab(clickedTab) {
+            // 모든 탭 초기화
+            const allTabs = document.querySelectorAll('.category-tab');
+            allTabs.forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive', 'border');
+            });
+
+            // 현재 누른 탭 활성화
+            clickedTab.classList.remove('tab-inactive', 'border');
+            clickedTab.classList.add('tab-active');
+
+            // 데이터 로딩 시뮬레이션 (화면 깜빡임)
+            const listContainer = document.getElementById('gift-list-container');
+            listContainer.style.opacity = '0.3';
+            setTimeout(() => {
+                listContainer.style.opacity = '1';
+                // 실제 연동 시 이곳에서 DOM 재생성 후 lucide 아이콘 재렌더링
+            }, 200);
+        }
+
+        // ------------------
+        // [3] 정렬(인기순) 드롭다운 로직
+        // ------------------
+        function toggleSortMenu(event) {
+            event.stopPropagation(); // 바탕 클릭 감지용 전파 중단
+            const menu = document.getElementById('sort-menu');
+            const icon = document.getElementById('sort-icon');
+            isSortMenuOpen = !isSortMenuOpen;
+
+            if (isSortMenuOpen) {
+                menu.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 정렬 값 선택 시
+        function selectSort(sortName, element) {
+            document.getElementById('sort-label').textContent = sortName;
+
+            // 모든 메뉴 회색으로 변경
+            const buttons = document.querySelectorAll('#sort-menu button');
+            buttons.forEach(btn => {
+                btn.classList.remove('text-[#5031E5]', 'font-bold');
+                btn.classList.add('text-gray-600', 'font-medium');
+            });
+
+            // 클릭한 것만 보라색 변경
+            element.classList.remove('text-gray-600', 'font-medium');
+            element.classList.add('text-[#5031E5]', 'font-bold');
+
+            toggleSortMenu({ stopPropagation: () => { } });
+        }
+
+        // 바탕화면 클릭 시 드롭다운 닫기
+        document.addEventListener('click', function (event) {
+            const sortMenu = document.getElementById('sort-menu');
+            if (isSortMenuOpen && !sortMenu.contains(event.target)) {
+                toggleSortMenu({ stopPropagation: () => { } });
+            }
+        });
+
+        // ------------------
+        // [4] 하단 완료 및 헤더 버튼
+        // ------------------
+        function submitSelection() {
+            if (selectedItems.size === 0) return;
+            alert(`완료! 총 ${selectedItems.size}개의 사은품(ID: ${Array.from(selectedItems).join(', ')})이 장바구니에 담겼습니다.`);
+        }
+
+        // 아이폰 하단 홈바(Safe Area) 여백 적용 (Tailwind 임시 대응)
+        document.addEventListener('DOMContentLoaded', () => {
+            const style = document.createElement('style');
+            style.innerHTML = `.pb-safe { padding-bottom: env(safe-area-inset-bottom); }`;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,526 @@
+{
+    "name": "00000000-0000-0000-0000-000000000000",
+    "displayName": "MM_015_요금결제",
+    "knowledgeConnectorSettings": {
+        "enabled": true,
+        "triggerFulfillment": {
+            "messages": [
+                {
+                    "text": {
+                        "text": [
+                            ""
+                        ]
+                    },
+                    "languageCode": "ko"
+                }
+            ]
+        },
+        "targetPage": "projects/-/locations/-/agents/-/flows/-/pages/-",
+        "dataStoreConnections": [
+            {
+                "dataStoreType": "UNSTRUCTURED",
+                "dataStore": "projects/-/locations/-/collections/-/dataStores/-",
+                "documentProcessingMode": "DOCUMENTS"
+            }
+        ]
+    },
+    "advancedSettings": {
+        "loggingSettings": {
+            "enableStackdriverLogging": true,
+            "enableInteractionLogging": true
+        }
+    },
+    "pages": [
+        {
+            "name": "MM_015_00",
+            "displayName": "MM_015_00",
+            "entryFulfillment": {
+                "setParameterActions": [
+                    {
+                        "parameter": "MM_CALLBOT",
+                        "value": "PAY_900"
+                    },
+                    {
+                        "parameter": "vdnConn",
+                        "value": "MM_015"
+                    }
+                ]
+            },
+            "form": {
+                "parameters": [
+                    {
+                        "displayName": "goto_01",
+                        "required": true,
+                        "entityType": "projects/-/locations/-/agents/-/entityTypes/sys.any",
+                        "fillBehavior": {
+                            "initialPromptFulfillment": {
+                                "messages": [
+                                    {
+                                        "text": {
+                                            "text": [
+                                                "_{$session.params.vdnConn} 시작_&&bargeInEnable:0"
+                                            ]
+                                        },
+                                        "languageCode": "ko"
+                                    }
+                                ],
+                                "setParameterActions": [
+                                    {
+                                        "parameter": "moveTo",
+                                        "value": null
+                                    },
+                                    {
+                                        "parameter": "event",
+                                        "value": null
+                                    }
+                                ]
+                            }
+                        },
+                        "advancedSettings": {
+                            "dtmfSettings": {
+                                "enabled": true,
+                                "maxDigits": 1,
+                                "useSystemEntityRule": false
+                            }
+                        }
+                    }
+                ]
+            },
+            "transitionRoutes": [
+                {
+                    "intent": "처음으로_ETC_994",
+                    "targetPage": "팝업1_처음으로",
+                    "name": "52fbd2bb-0d17-486d-9669-eecfc09cfbea"
+                },
+                {
+                    "intent": "상담사연결_ETC_985",
+                    "targetPage": "팝업1_상담사연결",
+                    "name": "fafaad5d-dce7-4fe7-b9c2-b5297316fc1b"
+                },
+                {
+                    "condition": "$page.params.status = \"FINAL\"",
+                    "targetPage": "MM_015_01",
+                    "name": "cbe136df-efb4-4b57-a065-ff1d05faec38"
+                }
+            ],
+            "eventHandlers": [
+                {
+                    "event": "common_click_quickSelect",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_00"
+                            }
+                        ]
+                    },
+                    "targetPage": "팝업1_퀵버튼",
+                    "name": "4acb0128-444c-473d-aba0-9c299c852445"
+                },
+                {
+                    "event": "common_click_transferRequest",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_00"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_009_공통_상담사연결",
+                    "name": "673f3246-24eb-41db-8d19-eeede31ed3e0"
+                },
+                {
+                    "event": "is_valid_close",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_00"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_002_공통_MM_종료버튼",
+                    "name": "5779c1ed-1dfb-4fd5-8bb2-de56411516eb"
+                },
+                {
+                    "event": "is_valid_end",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_00"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_012_공통_호종료",
+                    "name": "48b111b1-1d7c-40ad-be61-b8474136e6ba"
+                },
+                {
+                    "event": "is_valid_home",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_00"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_003_공통_MM_처음으로버튼",
+                    "name": "eeb006f8-9585-4b1f-abbb-a483ca88fb98"
+                },
+                {
+                    "event": "USER_DIALOG_END",
+                    "targetPage": "GN_001_공통_HangUp",
+                    "name": "df06e88d-a0bb-4740-9777-628fdb7713d7"
+                }
+            ]
+        },
+        {
+            "name": "MM_015_01",
+            "displayName": "MM_015_01",
+            "entryFulfillment": {
+                "webhook": "멀티모달_요금결제_API",
+                "tag": "결제대상조회"
+            },
+            "transitionRoutes": [
+                {
+                    "condition": "$session.params.IS_SUCCESS != \"Y\"",
+                    "targetPage": "GN_008_공통_Webhook호출실패",
+                    "name": "f2ccf1fb-dbdb-4654-be74-722a945b1ffc"
+                },
+                {
+                    "condition": "$session.params.IS_SUCCESS = \"Y\" AND $session.params.T_CUST_YN = \"Y\"",
+                    "targetPage": "GN_009_공통_상담사연결",
+                    "name": "5f7b489a-241c-43ad-a0e2-af0f64c63bf1"
+                },
+                {
+                    "condition": "$session.params.IS_SUCCESS = \"Y\" AND $session.params.T_CUST_YN != \"Y\" AND $session.params.IS_UNPAID = \"N\"",
+                    "targetPage": "MM_015_02_미납없음",
+                    "name": "81c3b1c6-a6af-4892-a1b7-a89a0f44dc13"
+                },
+                {
+                    "condition": "$session.params.IS_SUCCESS = \"Y\" AND $session.params.T_CUST_YN != \"Y\" AND $session.params.IS_UNPAID = \"Y\" AND $session.params.O_STOP_YN = \"Y\"",
+                    "targetPage": "MM_015_03_미납중지",
+                    "name": "a2b0e6e7-1fb8-4223-b6d8-bf8d405234db"
+                },
+                {
+                    "condition": "$session.params.IS_SUCCESS = \"Y\" AND $session.params.T_CUST_YN != \"Y\" AND $session.params.IS_UNPAID = \"Y\" AND $session.params.O_STOP_YN != \"Y\"",
+                    "targetPage": "MM_015_04_일반미납",
+                    "name": "dafcafcc-ea66-4c4f-b673-9a39f60af0f1"
+                }
+            ],
+            "eventHandlers": [
+                {
+                    "event": "WEBHOOK_FAILED_EVENT",
+                    "targetPage": "GN_008_공통_Webhook호출실패",
+                    "name": "28e3fa57-d3eb-46c5-bd57-de62145b0d61"
+                }
+            ]
+        },
+        {
+            "name": "MM_015_02_미납없음",
+            "displayName": "MM_015_02_미납없음",
+            "entryFulfillment": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [
+                                "현재 고객님의 납부내역 조회에 관련된 상세 여부는 웹페이지를 확인하시거나 고객센터로 문의해주세요.&&bargeInEnable:0"
+                            ]
+                        },
+                        "languageCode": "ko"
+                    }
+                ],
+                "setParameterActions": [
+                    {
+                        "parameter": "event",
+                        "value": "multimodal"
+                    },
+                    {
+                        "parameter": "moveTo",
+                        "value": "arsPay_not_unpaid_03"
+                    }
+                ]
+            },
+            "transitionRoutes": [
+                {
+                    "condition": "true",
+                    "targetPage": "GN_012_공통_호종료",
+                    "name": "48b111b1-1d7c-40ad-be61-b8474136e6bc"
+                }
+            ]
+        },
+        {
+            "name": "MM_015_03_미납중지",
+            "displayName": "MM_015_03_미납중지",
+            "entryFulfillment": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [
+                                "미납된 기준 미납요금은 {$session.params.O_TOT_COL_AMT}원이에요. 납부를 하시려면 요금 납부 라고 말씀해 주세요.&&bargeInEnable:0"
+                            ]
+                        },
+                        "languageCode": "ko"
+                    }
+                ],
+                "setParameterActions": [
+                    {
+                        "parameter": "event",
+                        "value": "multimodal"
+                    },
+                    {
+                        "parameter": "moveTo",
+                        "value": "arsPay_not_unpaid_02"
+                    }
+                ]
+            },
+            "form": {
+                "parameters": [
+                    {
+                        "displayName": "wait_input",
+                        "required": true,
+                        "entityType": "projects/-/locations/-/agents/-/entityTypes/sys.any"
+                    }
+                ]
+            },
+            "transitionRoutes": [
+                {
+                    "intent": "요금납부_PAY_001",
+                    "targetPage": "MM_015_05_ARS연결",
+                    "name": "099a12c4-84fb-4bba-95fd-a02ffdfc8f49"
+                }
+            ],
+            "eventHandlers": [
+                {
+                    "event": "arsPay_click_connectRealTimeARS",
+                    "targetPage": "MM_015_05_ARS연결",
+                    "name": "3dbf33c3-61a1-4cf1-ae5d-3d4416a909dd"
+                },
+                {
+                    "event": "common_click_quickSelect",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_03_미납중지"
+                            }
+                        ]
+                    },
+                    "targetPage": "팝업1_퀵버튼",
+                    "name": "4acb0128-444c-473d-aba0-9c299c852445"
+                },
+                {
+                    "event": "common_click_transferRequest",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_03_미납중지"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_009_공통_상담사연결",
+                    "name": "673f3246-24eb-41db-8d19-eeede31ed3e0"
+                },
+                {
+                    "event": "is_valid_close",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_03_미납중지"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_002_공통_MM_종료버튼",
+                    "name": "5779c1ed-1dfb-4fd5-8bb2-de56411516eb"
+                },
+                {
+                    "event": "is_valid_end",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_03_미납중지"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_012_공통_호종료",
+                    "name": "48b111b1-1d7c-40ad-be61-b8474136e6ba"
+                },
+                {
+                    "event": "is_valid_home",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_03_미납중지"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_003_공통_MM_처음으로버튼",
+                    "name": "eeb006f8-9585-4b1f-abbb-a483ca88fb98"
+                },
+                {
+                    "event": "USER_DIALOG_END",
+                    "targetPage": "GN_001_공통_HangUp",
+                    "name": "df06e88d-a0bb-4740-9777-628fdb7713d7"
+                }
+            ]
+        },
+        {
+            "name": "MM_015_04_일반미납",
+            "displayName": "MM_015_04_일반미납",
+            "entryFulfillment": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [
+                                "이번달 미납요금은 {$session.params.O_TOT_COL_AMT}원이에요. 실시간 요금 납부로 하시려면 요금 납부라고 말씀해 주세요.&&bargeInEnable:0"
+                            ]
+                        },
+                        "languageCode": "ko"
+                    }
+                ],
+                "setParameterActions": [
+                    {
+                        "parameter": "event",
+                        "value": "multimodal"
+                    },
+                    {
+                        "parameter": "moveTo",
+                        "value": "arsPay_is_unpaid_01"
+                    }
+                ]
+            },
+            "form": {
+                "parameters": [
+                    {
+                        "displayName": "wait_input",
+                        "required": true,
+                        "entityType": "projects/-/locations/-/agents/-/entityTypes/sys.any"
+                    }
+                ]
+            },
+            "transitionRoutes": [
+                {
+                    "intent": "요금납부_PAY_001",
+                    "targetPage": "MM_015_05_ARS연결",
+                    "name": "099a12c4-84fb-4bba-95fd-a02ffdfc8f49"
+                }
+            ],
+            "eventHandlers": [
+                {
+                    "event": "arsPay_click_connectRealTimeARS",
+                    "targetPage": "MM_015_05_ARS연결",
+                    "name": "3dbf33c3-61a1-4cf1-ae5d-3d4416a909dd"
+                },
+                {
+                    "event": "common_click_quickSelect",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_04_일반미납"
+                            }
+                        ]
+                    },
+                    "targetPage": "팝업1_퀵버튼",
+                    "name": "4acb0128-444c-473d-aba0-9c299c852445"
+                },
+                {
+                    "event": "common_click_transferRequest",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_04_일반미납"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_009_공통_상담사연결",
+                    "name": "673f3246-24eb-41db-8d19-eeede31ed3e0"
+                },
+                {
+                    "event": "is_valid_close",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_04_일반미납"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_002_공통_MM_종료버튼",
+                    "name": "5779c1ed-1dfb-4fd5-8bb2-de56411516eb"
+                },
+                {
+                    "event": "is_valid_end",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_04_일반미납"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_012_공통_호종료",
+                    "name": "48b111b1-1d7c-40ad-be61-b8474136e6ba"
+                },
+                {
+                    "event": "is_valid_home",
+                    "triggerFulfillment": {
+                        "setParameterActions": [
+                            {
+                                "parameter": "intentBack",
+                                "value": "MM_015_04_일반미납"
+                            }
+                        ]
+                    },
+                    "targetPage": "GN_003_공통_MM_처음으로버튼",
+                    "name": "eeb006f8-9585-4b1f-abbb-a483ca88fb98"
+                },
+                {
+                    "event": "USER_DIALOG_END",
+                    "targetPage": "GN_001_공통_HangUp",
+                    "name": "df06e88d-a0bb-4740-9777-628fdb7713d7"
+                }
+            ]
+        },
+        {
+            "name": "MM_015_05_ARS연결",
+            "displayName": "MM_015_05_ARS연결",
+            "entryFulfillment": {
+                "messages": [
+                    {
+                        "text": {
+                            "text": [
+                                "실시간 요금 납부 ARS로 연결해 드릴게요. 잠시 후 폰에서 종료하는 팝업창이 표출될 예정이에요.&&bargeInEnable:0"
+                            ]
+                        },
+                        "languageCode": "ko"
+                    }
+                ],
+                "setParameterActions": [
+                    {
+                        "parameter": "event",
+                        "value": "multimodal"
+                    },
+                    {
+                        "parameter": "moveTo",
+                        "value": "arsPay_click_connectRealTimeARS"
+                    }
+                ]
+            },
+            "transitionRoutes": [
+                {
+                    "condition": "true",
+                    "targetPage": "GN_001_공통_HangUp",
+                    "name": "78abdc32-2111-4ca6-bca1-1dc248c89c8a"
+                }
+            ]
+        }
+    ]
+}
